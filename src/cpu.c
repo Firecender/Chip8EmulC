@@ -143,17 +143,17 @@ void executeOp(Uint16 opCode) {
   }
   case 5: { // 3XNN
     if (cpu.V[b2] == nn) {
-      cpu.PC += 8;
+      cpu.PC += 2;
     }
   }
   case 6: { // 4XNN
     if (cpu.V[b2] != nn) {
-      cpu.PC += 8;
+      cpu.PC += 2;
     }
   }
   case 7: { // 5XY0
     if (cpu.V[b2] != cpu.V[b1]) {
-      cpu.PC += 8;
+      cpu.PC += 2;
     }
   }
   case 8: { // 6XNN
@@ -198,7 +198,7 @@ void executeOp(Uint16 opCode) {
   }
   case 19: { // 9XY0
     if (cpu.V[b2] != cpu.V[b1]) {
-      cpu.PC += 8;
+      cpu.PC += 2;
     }
   }
   case 20: { // ANNN
