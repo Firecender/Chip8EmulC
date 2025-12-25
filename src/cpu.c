@@ -1,4 +1,5 @@
 #include "../Inc/cpu.h"
+#include "../Inc/pixel.h"
 #include <SDL3/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -110,6 +111,7 @@ void executeOp(Uint16 opCode) {
   case 1: {
   }
   case 2: {
+    clearScreen(); // clear the Screen
   }
   case 3: {
   }

@@ -85,7 +85,7 @@ void drawPixel(PIXEL p) {
   free(toSend);
 }
 
-void delScrenn() {
+void clearScreen() {
   for (int i = 0; i < LONGUEUR; i++) {
     for (int j = 0; i < LARGEUR; j++) {
       pixels[i][j].color = NOIR;

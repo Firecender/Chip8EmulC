@@ -29,7 +29,7 @@ extern SDL_Texture *carre[2];
 void initPixel();
 void initScreen();
 void drawPixel(PIXEL p);
-void delScrenn();
+void clearScreen();
 void updateScreen();
 
 #endif // !PIXEL_H
