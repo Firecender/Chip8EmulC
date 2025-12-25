@@ -1,5 +1,6 @@
 #ifndef PIXEL_H
 #define PIXEL_H
+#include "cpu.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_rect.h>
@@ -28,8 +29,9 @@ extern SDL_Texture *carre[2];
 
 void initPixel();
 void initScreen();
-void drawPixel(PIXEL p);
+void showPixelsState(PIXEL p);
 void clearScreen();
 void updateScreen();
+void drawSprite(CPU *cpu, Uint8 b2, Uint8 b1, Uint8 b0);
 
 #endif // !PIXEL_H

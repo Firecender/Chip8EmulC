@@ -78,11 +78,14 @@ void initScreen() {
   SDL_DestroySurface(temp);
 }
 
-void drawPixel(PIXEL p) {
-  SDL_FRect *toSend = malloc(sizeof(SDL_FRect));
-  SDL_RectToFRect(&p.pos, toSend);
-  SDL_RenderTexture(rend, carre[p.color], NULL, toSend);
-  free(toSend);
+void showPixelsState(PIXEL p) {
+  SDL_FRect toSend;
+  toSend.h = 0;
+  toSend.x = 0;
+  toSend.y = 0;
+  toSend.w = 0;
+  SDL_RectToFRect(&p.pos, &toSend);
+  SDL_RenderTexture(rend, carre[p.color], NULL, &toSend);
 }
 
 void clearScreen() {
@@ -96,9 +99,34 @@ void updateScreen() {
   SDL_RenderClear(rend);
   for (int i = 0; i < LONGUEUR; i++) {
     for (int j = 0; j < LARGEUR; j++) {
-      drawPixel(pixels[i][j]);
+      showPixelsState(pixels[i][j]);
     }
   }
 
   SDL_RenderPresent(rend);
+}
+void drawSprite(CPU *cpu, Uint8 b2, Uint8 b1, Uint8 b0) {
+  Uint8 toShow = 0;
+  Uint8 x = cpu->V[b2];
+  Uint8 y = cpu->V[b1];
+
+  for (Uint8 k = 0; k < cpu->V[b0]; k++) { // 1101 0101
+    if (k + y > LARGEUR) {
+      break;
+    }
+    toShow = cpu->memory[cpu->i + k];
+    for (Uint8 d = 0; d < 8; d++) { //
+      if (d + cpu->V[b2] > LONGUEUR) {
+        break;
+      }
+      if ((toShow >> d) & 0x01) {
+        if (pixels[x + (7 - d)][y + k].color == 1) {
+          cpu->V[0xF] = 1;
+          pixels[x + (7 - d)][y + k].color = 0;
+        } else {
+          pixels[x + (7 - d)][y + k].color = 1;
+        }
+      }
+    }
+  }
 }

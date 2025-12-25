@@ -210,13 +210,8 @@ void executeOp(Uint16 opCode) {
   case 22: {                         // CXNN
     cpu.V[b2] = nn & (rand() % 255); // TODO: INIT RANDOM !!
   }
-  case 23: {      // DXYN
-    PIXEL toDraw; // TODO: function drawPixel do not modify Pixels state;
-    toDraw.pos.x = cpu.V[b2];
-    toDraw.pos.y = cpu.V[b1];
-    toDraw.pos.h = cpu.V[b0];
-    toDraw.pos.w = 8; // TODO: change drawPixel Function to Bool and check if
-                      // pixel drawn flipped other pixels
+  case 23: { // DXYN
+    drawSprite(&cpu, b2, b1, b0);
   }
   case 24: { // EX9E
   }
