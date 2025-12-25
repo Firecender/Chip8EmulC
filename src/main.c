@@ -2,18 +2,28 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_surface.h>
+#include <SDL3/SDL_timer.h>
 #include <stdlib.h>
+#define FPS 16 // millisec
+#define ops 4  // op per cycle
 
 void initialiserSDL();
 void quitterSDL();
 void pause();
 
 int main(int argc, char *argv[]) {
+  Uint8 active = 1;
   initScreen();
   initPixel();
 
   updateScreen();
+
+  do {
+    updateScreen();
+    SDL_Delay(FPS);
+  } while (active);
 
   pause();
 
