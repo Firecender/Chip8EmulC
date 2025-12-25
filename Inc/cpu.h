@@ -30,14 +30,11 @@ typedef struct {
   Uint16 code[NBOPCODE];
 } opTable;
 
-opTable table;
-
-CPU cpu;
-
 void initCpu();
 void initopTable();
 void decompter();
 Uint16 getOpCode();
 void executeOp(Uint16 opCode);
+void stripOpCode(Uint16 opCode, Uint8 *b0, Uint8 *b1, Uint8 *b2, Uint8 *b3);
 
 #endif // !CPU_H

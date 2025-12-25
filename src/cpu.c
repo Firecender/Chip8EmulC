@@ -3,6 +3,9 @@
 #include <SDL3/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
+CPU cpu;
+opTable table;
+
 void initCpu() {
   cpu.PC = pointerStart;
   cpu.stackPointeur = 0;
@@ -92,7 +95,23 @@ void initopTable() {
   table.mask[34] = 0xF0FF; // FX65
 }
 
+void stripOpCode(Uint16 opCode, Uint8 *b0, Uint8 *b1, Uint8 *b2, Uint8 *b3) {
+  *b0 = (opCode) & 0x000F;
+  *b1 = (opCode & 0x00F0) >> 4;
+  *b2 = (opCode & 0x0F00) >> 8;
+  *b3 = (opCode & 0xF000) >> 12;
+}
+
 void executeOp(Uint16 opCode) {
+  Uint8 b0 = 0;
+  Uint8 b1 = 0;
+  Uint8 b2 = 0;
+  Uint8 b3 = 0;
+  /*
+   * Seperate the opCode into b vars for parsing
+   * 0xAFED --> b0 = 0xD, b1 = 0xE, b2 = 0xF, b3 = 0xA
+   */
+  stripOpCode(opCode, &b0, &b1, &b2, &b3);
 
   Uint8 i = 0;
   do {
@@ -109,23 +128,37 @@ void executeOp(Uint16 opCode) {
 
   switch (i) {
   case 1: {
+    clearScreen(); // clear the screen
   }
-  case 2: {
-    clearScreen(); // clear the Screen
+  case 2: { // return;
+    //???
   }
-  case 3: {
+  case 3: { // 1NNN goto NNN
+    cpu.PC = (((b2 << 4) | b1) << 4 | b0);
   }
-  case 4: {
+  case 4: { // 2NNN
+    executeOp(cpu.memory[(((b2 << 4) | b1) << 4 | b0)]);
   }
-  case 5: {
+  case 5: { // 3XNN
+    if (cpu.V[b2] == ((b1 << 4) | b0)) {
+      cpu.PC += 8;
+    }
   }
-  case 6: {
+  case 6: { // 4XNN
+    if (cpu.V[b2] != ((b1 << 4) | b0)) {
+      cpu.PC += 8;
+    }
   }
-  case 7: {
+  case 7: { // 5XY0
+    if (cpu.V[b2] != cpu.V[b1]) {
+      cpu.PC += 8;
+    }
   }
-  case 8: {
+  case 8: { // 6XNN
+    cpu.V[b2] = ((b2 << 4) | b1);
   }
-  case 9: {
+  case 9: { // 7XNN
+    cpu.V[b2] += ((b2 << 4) | b1);
   }
   case 10: {
   }
@@ -176,8 +209,6 @@ void executeOp(Uint16 opCode) {
   case 33: {
   }
   case 34: {
-  }
-  case 35: {
   }
   default: {
   }
