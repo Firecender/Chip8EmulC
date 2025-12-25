@@ -112,6 +112,8 @@ void executeOp(Uint16 opCode) {
    * 0xAFED --> b0 = 0xD, b1 = 0xE, b2 = 0xF, b3 = 0xA
    */
   stripOpCode(opCode, &b0, &b1, &b2, &b3);
+  Uint16 nnn = (((b2 << 4) | b1) << 4 | b0);
+  Uint8 nn = ((b1 << 4) | b0);
 
   Uint8 i = 0;
   do {
@@ -134,18 +136,18 @@ void executeOp(Uint16 opCode) {
     //???
   }
   case 3: { // 1NNN goto NNN
-    cpu.PC = (((b2 << 4) | b1) << 4 | b0);
+    cpu.PC = nnn;
   }
   case 4: { // 2NNN
-    executeOp(cpu.memory[(((b2 << 4) | b1) << 4 | b0)]);
+    executeOp(cpu.memory[nnn]);
   }
   case 5: { // 3XNN
-    if (cpu.V[b2] == ((b1 << 4) | b0)) {
+    if (cpu.V[b2] == nn) {
       cpu.PC += 8;
     }
   }
   case 6: { // 4XNN
-    if (cpu.V[b2] != ((b1 << 4) | b0)) {
+    if (cpu.V[b2] != nn) {
       cpu.PC += 8;
     }
   }
@@ -155,38 +157,65 @@ void executeOp(Uint16 opCode) {
     }
   }
   case 8: { // 6XNN
-    cpu.V[b2] = ((b2 << 4) | b1);
+    cpu.V[b2] = nn;
   }
   case 9: { // 7XNN
-    cpu.V[b2] += ((b2 << 4) | b1);
+    cpu.V[b2] += nn;
   }
-  case 10: {
+  case 10: { // 8XY0
+    cpu.V[b2] = cpu.V[b1];
   }
-  case 11: {
+  case 11: { // 8XY1
+    cpu.V[b2] = cpu.V[b2] | cpu.V[b1];
   }
-  case 12: {
+  case 12: { // 8XY2
+    cpu.V[b2] = cpu.V[b2] & cpu.V[b1];
   }
-  case 13: {
+  case 13: { // 8XY3
+    cpu.V[b2] = cpu.V[b2] ^ cpu.V[b1];
   }
-  case 14: {
+  case 14: { // 8XY4
+    if (cpu.V[b2] + cpu.V[b1] > 0xFFFF) {
+      cpu.V[0xF] = 1;
+    }
+    cpu.V[b2] += cpu.V[b1];
   }
-  case 15: {
+  case 15: { // 8XY5
+    cpu.V[0xF] = cpu.V[b2] >= cpu.V[b1] ? 1 : 0;
+    cpu.V[b2] -= cpu.V[b1];
   }
-  case 16: {
+  case 16: { // 8XY6  1010 1010 0000 0001
+    cpu.V[0xF] = cpu.V[b2] & 0x01;
+    cpu.V[b2] = cpu.V[b2] >> 1;
   }
-  case 17: {
+  case 17: { // 8XY7
+    cpu.V[0xF] = cpu.V[b1] >= cpu.V[b2] ? 1 : 0;
+    cpu.V[b2] = cpu.V[b1] - cpu.V[b2];
   }
-  case 18: {
+  case 18: { // 8XYE 1010 1010 1000 0000
+    cpu.V[0xF] = (cpu.V[b2] & 0x80) != 0 ? 1 : 0;
+    cpu.V[b2] = cpu.V[b2] << 1;
   }
-  case 19: {
+  case 19: { // 9XY0
+    if (cpu.V[b2] != cpu.V[b1]) {
+      cpu.PC += 8;
+    }
   }
-  case 20: {
+  case 20: { // ANNN
+    cpu.i = nnn;
   }
-  case 21: {
+  case 21: { // BNNN
+    cpu.PC = cpu.V[0] + nnn;
   }
-  case 22: {
+  case 22: {                         // CXNN
+    cpu.V[b2] = nn & (rand() % 255); // TODO: INIT RANDOM !!
   }
-  case 23: {
+  case 23: {      // DXYN
+    PIXEL toDraw; // TODO: function drawPixel do not modify Pixels state;
+    toDraw.pos.x = cpu.V[b2];
+    toDraw.pos.y = cpu.V[b1];
+    toDraw.pos.h = cpu.V[b0];
+    toDraw.pos.w = 8;
   }
   case 24: {
   }
