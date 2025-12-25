@@ -175,7 +175,7 @@ void executeOp(Uint16 opCode) {
     cpu.V[b2] = cpu.V[b2] ^ cpu.V[b1];
   }
   case 14: { // 8XY4
-    if (cpu.V[b2] + cpu.V[b1] > 0xFFFF) {
+    if (cpu.V[b2] + cpu.V[b1] > 0xFF) {
       cpu.V[0xF] = 1;
     }
     cpu.V[b2] += cpu.V[b1];
@@ -215,23 +215,28 @@ void executeOp(Uint16 opCode) {
     toDraw.pos.x = cpu.V[b2];
     toDraw.pos.y = cpu.V[b1];
     toDraw.pos.h = cpu.V[b0];
-    toDraw.pos.w = 8;
+    toDraw.pos.w = 8; // TODO: change drawPixel Function to Bool and check if
+                      // pixel drawn flipped other pixels
   }
-  case 24: {
+  case 24: { // EX9E
   }
-  case 25: {
+  case 25: { // EXA1
   }
-  case 26: {
+  case 26: { // FX07
+    cpu.V[b2] = cpu.timerjeu;
   }
-  case 27: {
+  case 27: { // FX0A
   }
-  case 28: {
+  case 28: { // FX15
+    cpu.timerjeu = cpu.V[b2];
   }
-  case 29: {
+  case 29: { // FX18
+    cpu.timerson = cpu.V[b2];
   }
-  case 30: {
+  case 30: { // FX1E
+    cpu.i += cpu.V[b2];
   }
-  case 31: {
+  case 31: { // FX29
   }
   case 32: {
   }
