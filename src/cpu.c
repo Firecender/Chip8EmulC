@@ -1,5 +1,6 @@
 #include "../Inc/cpu.h"
 #include "../Inc/pixel.h"
+#include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_stdinc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,13 +134,16 @@ void executeOp(Uint16 opCode) {
     clearScreen(); // clear the screen
   }
   case 2: { // return;
-    //???
+    cpu.stackPointeur--;
+    cpu.PC = cpu.stack[cpu.stackPointeur] - 2;
   }
   case 3: { // 1NNN goto NNN
-    cpu.PC = nnn;
+    cpu.PC = nnn - 2;
   }
   case 4: { // 2NNN
-    executeOp(cpu.memory[nnn]);
+    cpu.stack[cpu.stackPointeur] = cpu.PC;
+    cpu.stackPointeur++;
+    cpu.PC = nnn;
   }
   case 5: { // 3XNN
     if (cpu.V[b2] == nn) {
@@ -214,13 +218,28 @@ void executeOp(Uint16 opCode) {
     drawSprite(&cpu, b2, b1, b0);
   }
   case 24: { // EX9E
+    if (strtol(SDL_GetKeyName(event.key.key), NULL, 16) == cpu.V[b2]) {
+      cpu.PC += 2;
+    }
   }
   case 25: { // EXA1
+    if (strtol(SDL_GetKeyName(event.key.key), NULL, 16) != cpu.V[b2]) {
+      cpu.PC += 2;
+    }
   }
   case 26: { // FX07
     cpu.V[b2] = cpu.timerjeu;
   }
   case 27: { // FX0A
+    Uint8 pressed = 0;
+    while (!pressed) {
+      if (event.key.down &&
+              (event.key.key >= 0x00000061u && event.key.key <= 0x00000066u) ||
+          (event.key.key >= 0x40000059u && event.key.key <= 0x00000062u)) {
+        pressed = 1;
+        cpu.V[b2] = strtol(SDL_GetKeyName(event.key.key), NULL, 16);
+      }
+    }
   }
   case 28: { // FX15
     cpu.timerjeu = cpu.V[b2];
@@ -233,7 +252,7 @@ void executeOp(Uint16 opCode) {
   }
   case 31: { // FX29
   }
-  case 32: {
+  case 32: { // FX33
   }
   case 33: {
   }
@@ -242,6 +261,7 @@ void executeOp(Uint16 opCode) {
   default: {
   }
   }
+  cpu.PC += 2;
 }
 
 void decompter() {
