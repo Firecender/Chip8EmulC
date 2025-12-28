@@ -275,3 +275,20 @@ void decompter() {
 Uint16 getOpCode() {
   return cpu.memory[cpu.stackPointeur] << 8 | cpu.memory[cpu.stackPointeur + 1];
 }
+void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
+              Uint8 *hundreds) { //
+
+  for (Uint8 i = 0; i <= 7; i++) {
+    bin = bin << 1;
+    if (((bin >> 8) & 0x0000000F) > 5) {
+      bin = ((((bin >> 8) & 0x000F) + 3) << 8) + (bin & 0xFFFFF0FF);
+    } // units
+    if (((bin >> 12) & 0x0000000F) > 5) {
+      bin = ((((bin >> 12) & 0x000F) + 3) << 12) + (bin & 0xFFFF0FFF);
+    }
+  }
+  bin = bin >> 8;
+  *units = (bin & 0x000F);
+  *tens = (bin & 0x00F0) << 4;
+  *hundreds = (0x0F00 & bin) << 8;
+}

@@ -36,5 +36,5 @@ void decompter();
 Uint16 getOpCode();
 void executeOp(Uint16 opCode);
 void stripOpCode(Uint16 opCode, Uint8 *b0, Uint8 *b1, Uint8 *b2, Uint8 *b3);
-
+void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens, Uint8 *hundreds);
 #endif // !CPU_H
