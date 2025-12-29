@@ -108,6 +108,10 @@ void executeOp(Uint16 opCode) {
   Uint8 b1 = 0;
   Uint8 b2 = 0;
   Uint8 b3 = 0;
+
+  Uint8 units = 0;
+  Uint8 tens = 0;
+  Uint8 hundreds = 0;
   /*
    * Seperate the opCode into b vars for parsing
    * 0xAFED --> b0 = 0xD, b1 = 0xE, b2 = 0xF, b3 = 0xA
@@ -253,10 +257,21 @@ void executeOp(Uint16 opCode) {
   case 31: { // FX29
   }
   case 32: { // FX33
+    binToBcd(b2, &units, &tens, &hundreds);
+
+    cpu.memory[cpu.i] = units;
+    cpu.memory[cpu.i + 1] = tens;
+    cpu.memory[cpu.i + 2] = hundreds;
   }
-  case 33: {
+  case 33: { // FX55
+    for (Uint8 i = 0; i < b2; i++) {
+      cpu.memory[cpu.i + i] = cpu.V[i];
+    }
   }
-  case 34: {
+  case 34: { // FX65
+    for (Uint8 i = 0; i < b2; i++) {
+      cpu.V[i] = cpu.memory[cpu.i + i];
+    }
   }
   default: {
   }
