@@ -255,6 +255,7 @@ void executeOp(Uint16 opCode) {
     cpu.i += cpu.V[b2];
   }
   case 31: { // FX29
+    cpu.i = 0xF0 & b2;
   }
   case 32: { // FX33
     binToBcd(b2, &units, &tens, &hundreds);
@@ -306,4 +307,86 @@ void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
   *units = (bin & 0x000F);
   *tens = (bin & 0x00F0) << 4;
   *hundreds = (0x0F00 & bin) << 8;
+}
+void initFont() { // 5 10 15 20 25
+  cpu.memory[0 * FONTHEIGHT] = 0xF0;
+  cpu.memory[0 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[0 * FONTHEIGHT + 2] = 0x90;
+  cpu.memory[0 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[0 * FONTHEIGHT + 4] = 0xF0; // 0
+  cpu.memory[1 * FONTHEIGHT] = 0x20;
+  cpu.memory[1 * FONTHEIGHT + 1] = 0x60;
+  cpu.memory[1 * FONTHEIGHT + 2] = 0x20;
+  cpu.memory[1 * FONTHEIGHT + 3] = 0x20;
+  cpu.memory[1 * FONTHEIGHT + 4] = 0x70; // 1
+  cpu.memory[2 * FONTHEIGHT] = 0xF0;
+  cpu.memory[2 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[2 * FONTHEIGHT + 2] = 0x90;
+  cpu.memory[2 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[2 * FONTHEIGHT + 4] = 0xF0; // 2
+  cpu.memory[3 * FONTHEIGHT] = 0xF0;
+  cpu.memory[3 * FONTHEIGHT + 1] = 0x10;
+  cpu.memory[3 * FONTHEIGHT + 2] = 0x70;
+  cpu.memory[3 * FONTHEIGHT + 3] = 0x10;
+  cpu.memory[3 * FONTHEIGHT + 4] = 0xF0; // 3
+  cpu.memory[4 * FONTHEIGHT] = 0x30;
+  cpu.memory[4 * FONTHEIGHT + 1] = 0x50;
+  cpu.memory[4 * FONTHEIGHT + 2] = 0x90;
+  cpu.memory[4 * FONTHEIGHT + 3] = 0xF0;
+  cpu.memory[4 * FONTHEIGHT + 4] = 0x10; // 4
+  cpu.memory[5 * FONTHEIGHT] = 0xF0;
+  cpu.memory[5 * FONTHEIGHT + 1] = 0x10;
+  cpu.memory[5 * FONTHEIGHT + 2] = 0xF0;
+  cpu.memory[5 * FONTHEIGHT + 3] = 0x80;
+  cpu.memory[5 * FONTHEIGHT + 4] = 0xF0; // 5
+  cpu.memory[6 * FONTHEIGHT] = 0xF0;
+  cpu.memory[6 * FONTHEIGHT + 1] = 0x80;
+  cpu.memory[6 * FONTHEIGHT + 2] = 0xF0;
+  cpu.memory[6 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[6 * FONTHEIGHT + 4] = 0xF0; // 6
+  cpu.memory[7 * FONTHEIGHT] = 0xF0;
+  cpu.memory[7 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[7 * FONTHEIGHT + 2] = 0x10;
+  cpu.memory[7 * FONTHEIGHT + 3] = 0x10;
+  cpu.memory[7 * FONTHEIGHT + 4] = 0x10; // 7
+  cpu.memory[8 * FONTHEIGHT] = 0xF0;
+  cpu.memory[8 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[8 * FONTHEIGHT + 2] = 0xF0;
+  cpu.memory[8 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[8 * FONTHEIGHT + 4] = 0xF0; // 8
+  cpu.memory[9 * FONTHEIGHT] = 0xF0;
+  cpu.memory[9 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[9 * FONTHEIGHT + 2] = 0xF0;
+  cpu.memory[9 * FONTHEIGHT + 3] = 0x10;
+  cpu.memory[9 * FONTHEIGHT + 4] = 0xF0; // 9
+  cpu.memory[10 * FONTHEIGHT] = 0xF0;
+  cpu.memory[10 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[10 * FONTHEIGHT + 2] = 0xF0;
+  cpu.memory[10 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[10 * FONTHEIGHT + 4] = 0xF0; // A
+  cpu.memory[11 * FONTHEIGHT] = 0xE0;
+  cpu.memory[11 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[11 * FONTHEIGHT + 2] = 0xE0;
+  cpu.memory[11 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[11 * FONTHEIGHT + 4] = 0xE0; // B
+  cpu.memory[12 * FONTHEIGHT] = 0xF0;
+  cpu.memory[12 * FONTHEIGHT + 1] = 0x80;
+  cpu.memory[12 * FONTHEIGHT + 2] = 0x80;
+  cpu.memory[12 * FONTHEIGHT + 3] = 0x80;
+  cpu.memory[12 * FONTHEIGHT + 4] = 0xF0; // C
+  cpu.memory[13 * FONTHEIGHT] = 0xE0;
+  cpu.memory[13 * FONTHEIGHT + 1] = 0x90;
+  cpu.memory[13 * FONTHEIGHT + 2] = 0x90;
+  cpu.memory[13 * FONTHEIGHT + 3] = 0x90;
+  cpu.memory[13 * FONTHEIGHT + 4] = 0xE0; // D
+  cpu.memory[14 * FONTHEIGHT] = 0xF0;
+  cpu.memory[14 * FONTHEIGHT + 1] = 0x80;
+  cpu.memory[14 * FONTHEIGHT + 2] = 0xE0;
+  cpu.memory[14 * FONTHEIGHT + 3] = 0x80;
+  cpu.memory[14 * FONTHEIGHT + 4] = 0xF0; // E
+  cpu.memory[15 * FONTHEIGHT] = 0xF0;
+  cpu.memory[15 * FONTHEIGHT + 1] = 0x80;
+  cpu.memory[15 * FONTHEIGHT + 2] = 0xE0;
+  cpu.memory[15 * FONTHEIGHT + 3] = 0x80;
+  cpu.memory[15 * FONTHEIGHT + 4] = 0xC0; // F
 }

@@ -5,6 +5,7 @@
 #define memorySize 4096
 #define pointerStart 500
 #define NBOPCODE 35
+#define FONTHEIGHT 5
 
 typedef struct {
   Uint8 memory[memorySize]; // mémoire Chip8 Uint8
