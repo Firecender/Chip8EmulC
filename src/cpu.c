@@ -326,9 +326,7 @@ void decompter() {
     cpu.timerjeu--;
   }
 }
-Uint16 getOpCode() {
-  return cpu.memory[cpu.stackPointeur] << 8 | cpu.memory[cpu.stackPointeur + 1];
-}
+Uint16 getOpCode() { return cpu.memory[cpu.PC] << 8 | cpu.memory[cpu.PC + 1]; }
 void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
               Uint8 *hundreds) { //
 
