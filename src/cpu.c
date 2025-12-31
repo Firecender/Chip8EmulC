@@ -308,6 +308,16 @@ void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
   *tens = (bin & 0x00F0) << 4;
   *hundreds = (0x0F00 & bin) << 8;
 }
+void loadRom() {
+  FILE *rom = fopen("../1-chip8-logo.ch8", "rb");
+  if (rom == NULL) {
+    printf("File does not exit \n");
+    exit(EXIT_FAILURE);
+  }
+  fread(&cpu.memory[pointerStart], sizeof(Uint8) * (memorySize - pointerStart),
+        1, rom);
+}
+
 void initFont() { // 5 10 15 20 25
   cpu.memory[0 * FONTHEIGHT] = 0xF0;
   cpu.memory[0 * FONTHEIGHT + 1] = 0x90;
