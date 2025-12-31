@@ -120,7 +120,7 @@ void executeOp(Uint16 opCode) {
   Uint16 nnn = (((b2 << 4) | b1) << 4 | b0);
   Uint8 nn = ((b1 << 4) | b0);
 
-  Uint8 i = 0;
+  Uint8 i = 1;
   do {
     if ((opCode & table.mask[i]) == table.code[i]) {
       break;
@@ -132,130 +132,162 @@ void executeOp(Uint16 opCode) {
     printf("Something isn't right ... \n");
     exit(EXIT_FAILURE);
   }
+  printf("executing %d\n", i);
 
   switch (i) {
   case 1: {
     clearScreen(); // clear the screen
+    break;
   }
   case 2: { // return;
     cpu.stackPointeur--;
     cpu.PC = cpu.stack[cpu.stackPointeur] - 2;
+    break;
   }
   case 3: { // 1NNN goto NNN
     cpu.PC = nnn - 2;
+    break;
   }
   case 4: { // 2NNN
     cpu.stack[cpu.stackPointeur] = cpu.PC;
     cpu.stackPointeur++;
     cpu.PC = nnn;
+    break;
   }
   case 5: { // 3XNN
     if (cpu.V[b2] == nn) {
       cpu.PC += 2;
     }
+    break;
   }
   case 6: { // 4XNN
     if (cpu.V[b2] != nn) {
       cpu.PC += 2;
     }
+    break;
   }
   case 7: { // 5XY0
     if (cpu.V[b2] != cpu.V[b1]) {
       cpu.PC += 2;
     }
+    break;
   }
   case 8: { // 6XNN
     cpu.V[b2] = nn;
+    break;
   }
   case 9: { // 7XNN
     cpu.V[b2] += nn;
+    break;
   }
   case 10: { // 8XY0
     cpu.V[b2] = cpu.V[b1];
+    break;
   }
   case 11: { // 8XY1
     cpu.V[b2] = cpu.V[b2] | cpu.V[b1];
+    break;
   }
   case 12: { // 8XY2
     cpu.V[b2] = cpu.V[b2] & cpu.V[b1];
+    break;
   }
   case 13: { // 8XY3
     cpu.V[b2] = cpu.V[b2] ^ cpu.V[b1];
+    break;
   }
   case 14: { // 8XY4
     if (cpu.V[b2] + cpu.V[b1] > 0xFF) {
       cpu.V[0xF] = 1;
     }
     cpu.V[b2] += cpu.V[b1];
+    break;
   }
   case 15: { // 8XY5
     cpu.V[0xF] = cpu.V[b2] >= cpu.V[b1] ? 1 : 0;
     cpu.V[b2] -= cpu.V[b1];
+    break;
   }
   case 16: { // 8XY6  1010 1010 0000 0001
     cpu.V[0xF] = cpu.V[b2] & 0x01;
     cpu.V[b2] = cpu.V[b2] >> 1;
+    break;
   }
   case 17: { // 8XY7
     cpu.V[0xF] = cpu.V[b1] >= cpu.V[b2] ? 1 : 0;
     cpu.V[b2] = cpu.V[b1] - cpu.V[b2];
+    break;
   }
   case 18: { // 8XYE 1010 1010 1000 0000
     cpu.V[0xF] = (cpu.V[b2] & 0x80) != 0 ? 1 : 0;
     cpu.V[b2] = cpu.V[b2] << 1;
+    break;
   }
   case 19: { // 9XY0
     if (cpu.V[b2] != cpu.V[b1]) {
       cpu.PC += 2;
     }
+    break;
   }
   case 20: { // ANNN
     cpu.i = nnn;
+    break;
   }
   case 21: { // BNNN
     cpu.PC = cpu.V[0] + nnn;
+    break;
   }
   case 22: {                         // CXNN
     cpu.V[b2] = nn & (rand() % 255); // TODO: INIT RANDOM !!
+    break;
   }
   case 23: { // DXYN
     drawSprite(&cpu, b2, b1, b0);
+    break;
   }
   case 24: { // EX9E
     if (strtol(SDL_GetKeyName(event.key.key), NULL, 16) == cpu.V[b2]) {
       cpu.PC += 2;
     }
+    break;
   }
   case 25: { // EXA1
     if (strtol(SDL_GetKeyName(event.key.key), NULL, 16) != cpu.V[b2]) {
       cpu.PC += 2;
     }
+    break;
   }
   case 26: { // FX07
     cpu.V[b2] = cpu.timerjeu;
+    break;
   }
   case 27: { // FX0A
     Uint8 pressed = 0;
     while (!pressed) {
-      if (event.key.down &&
-              (event.key.key >= 0x00000061u && event.key.key <= 0x00000066u) ||
-          (event.key.key >= 0x40000059u && event.key.key <= 0x00000062u)) {
+      if ((event.key.down &&
+           (event.key.key >= 0x00000061u && event.key.key <= 0x00000066u)) ||
+          ((event.key.key >= 0x40000059u && event.key.key <= 0x00000062u))) {
         pressed = 1;
         cpu.V[b2] = strtol(SDL_GetKeyName(event.key.key), NULL, 16);
       }
     }
+    break;
   }
   case 28: { // FX15
     cpu.timerjeu = cpu.V[b2];
+    break;
   }
   case 29: { // FX18
     cpu.timerson = cpu.V[b2];
+    break;
   }
   case 30: { // FX1E
     cpu.i += cpu.V[b2];
+    break;
   }
   case 31: { // FX29
     cpu.i = 0xF0 & b2;
+    break;
   }
   case 32: { // FX33
     binToBcd(b2, &units, &tens, &hundreds);
@@ -263,21 +295,27 @@ void executeOp(Uint16 opCode) {
     cpu.memory[cpu.i] = units;
     cpu.memory[cpu.i + 1] = tens;
     cpu.memory[cpu.i + 2] = hundreds;
+    break;
   }
   case 33: { // FX55
     for (Uint8 i = 0; i < b2; i++) {
       cpu.memory[cpu.i + i] = cpu.V[i];
     }
+    break;
   }
   case 34: { // FX65
     for (Uint8 i = 0; i < b2; i++) {
       cpu.V[i] = cpu.memory[cpu.i + i];
     }
+    break;
   }
   default: {
+  } break;
   }
-  }
+
   cpu.PC += 2;
+  printf("PC = %X\n", cpu.PC);
+  printf("opCode %X\n", opCode);
 }
 
 void decompter() {
@@ -309,7 +347,7 @@ void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
   *hundreds = (0x0F00 & bin) << 8;
 }
 void loadRom() {
-  FILE *rom = fopen("../1-chip8-logo.ch8", "rb");
+  FILE *rom = fopen("../rom/1-chip8-logo.ch8", "rb");
   if (rom == NULL) {
     printf("File does not exit \n");
     exit(EXIT_FAILURE);

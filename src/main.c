@@ -15,12 +15,17 @@ void pause();
 
 int main(int argc, char *argv[]) {
   Uint8 active = 1;
+  Uint8 compteur = 0;
+
   initScreen();
   initPixel();
 
   updateScreen();
 
   do {
+    for (compteur = 0; compteur < ops; compteur++) {
+      executeOp(getOpCode());
+    }
     updateScreen();
     SDL_Delay(FPS);
   } while (active);

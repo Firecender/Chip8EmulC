@@ -89,8 +89,9 @@ void showPixelsState(PIXEL p) {
 }
 
 void clearScreen() {
+  printf("clearing screen \n");
   for (int i = 0; i < LONGUEUR; i++) {
-    for (int j = 0; i < LARGEUR; j++) {
+    for (int j = 0; j < LARGEUR; j++) { // haha
       pixels[i][j].color = NOIR;
     }
   }
