@@ -22,6 +22,8 @@ void initCpu() {
 
   cpu.timerjeu = 0;
   cpu.timerson = 0;
+  initopTable();
+  initFont();
 }
 void initopTable() {
   table.code[0] = 0x0FFF;
@@ -119,16 +121,19 @@ void executeOp(Uint16 opCode) {
   stripOpCode(opCode, &b0, &b1, &b2, &b3);
   Uint16 nnn = (((b2 << 4) | b1) << 4 | b0);
   Uint8 nn = ((b1 << 4) | b0);
+  printf("b0 = %X b1 = %X b2 = %X b3 = %X\n", b0, b1, b2, b3);
 
   Uint8 i = 1;
   do {
     if ((opCode & table.mask[i]) == table.code[i]) {
+      printf(" %X == %X \n", (opCode & table.mask[i]), table.code[i]);
       break;
     }
+    i++;
 
-  } while (i < NBOPCODE + 1);
+  } while (i < NBOPCODE);
 
-  if (i > NBOPCODE) {
+  if (i == NBOPCODE) {
     printf("Something isn't right ... \n");
     exit(EXIT_FAILURE);
   }
@@ -314,8 +319,6 @@ void executeOp(Uint16 opCode) {
   }
 
   cpu.PC += 2;
-  printf("PC = %X\n", cpu.PC);
-  printf("opCode %X\n", opCode);
 }
 
 void decompter() {
@@ -326,7 +329,12 @@ void decompter() {
     cpu.timerjeu--;
   }
 }
-Uint16 getOpCode() { return cpu.memory[cpu.PC] << 8 | cpu.memory[cpu.PC + 1]; }
+Uint16 getOpCode() {
+  printf("PC = %d ,opCode =  %X\n", cpu.PC,
+         cpu.memory[cpu.PC] << 8 | cpu.memory[cpu.PC + 1]);
+  return cpu.memory[cpu.PC] << 8 | cpu.memory[cpu.PC + 1];
+}
+
 void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
               Uint8 *hundreds) { //
 
@@ -345,7 +353,7 @@ void binToBcd(Uint32 bin, Uint8 *units, Uint8 *tens,
   *hundreds = (0x0F00 & bin) << 8;
 }
 void loadRom() {
-  FILE *rom = fopen("../rom/1-chip8-logo.ch8", "rb");
+  FILE *rom = fopen("../rom/2-ibm-logo.ch8", "rb");
   if (rom == NULL) {
     printf("File does not exit \n");
     exit(EXIT_FAILURE);
